@@ -32,18 +32,19 @@ uint32_t i_reduce_popcnt(const uint32<4>& a)
     }
     return r;
 #elif SIMDPP_USE_X86_POPCNT_INSN
-    uint32_t r = 0;
 #if SIMDPP_64_BITS
     uint64<2> a64; a64 = a;
+    int64_t r = 0;
     r += _mm_popcnt_u64(extract<0>(a64));
     r += _mm_popcnt_u64(extract<1>(a64));
 #else
+    int32_t r = 0
     r += _mm_popcnt_u32(extract<0>(a));
     r += _mm_popcnt_u32(extract<1>(a));
     r += _mm_popcnt_u32(extract<2>(a));
     r += _mm_popcnt_u32(extract<3>(a));
 #endif
-    return r;
+    return (uint32_t)r;
 #elif SIMDPP_USE_NEON
     uint8<16> r = vcntq_u8(vreinterpretq_u8_u32(a.native()));
     return reduce_add(r);

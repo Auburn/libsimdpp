@@ -248,10 +248,10 @@ uint64<2> i_popcnt(const uint64<2>& a)
     }
     return r;
 #elif SIMDPP_USE_X86_POPCNT_INSN
-    unsigned a0, a1;
+    int a0, a1;
 #if SIMDPP_64_BITS
-    a0 = _mm_popcnt_u64(extract<0>(a));
-    a1 = _mm_popcnt_u64(extract<1>(a));
+    a0 = (int)_mm_popcnt_u64(extract<0>(a));
+    a1 = (int)_mm_popcnt_u64(extract<1>(a));
 #else
     uint32<4> a32; a32 = a;
     a0 =  _mm_popcnt_u32(extract<0>(a32));
