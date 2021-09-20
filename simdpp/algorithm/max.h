@@ -25,8 +25,8 @@ namespace SIMDPP_ARCH_NAMESPACE {
 
 //Returns the value of the element with the largest value in the range[first, last[ over comp,
 //The lowest possible value for the order if the range is empty.
-template<typename T, typename Comp>
-T max(T const* first, T const* last, Comp comp)
+template<typename T, typename CompLess>
+T max(T const* first, T const* last, CompLess comp)
 {
 #ifndef SIMDPP_DEBUG  //precondition debug mode           
     if (!first)
@@ -37,7 +37,7 @@ T max(T const* first, T const* last, Comp comp)
     using simd_type_T = typename simd_traits<T>::simd_type;
     using simd_mask_T = typename simd_traits<T>::simd_mask_type;
 
-    if (first == last) return comp(T(0), T(1)) ? std::numeric_limits<T>::max() : std::numeric_limits<T>::lowest(); //stolen from boost::simd
+    if (first == last) return comp(T(0), T(1)) ? std::numeric_limits<T>::lowest() : std::numeric_limits<T>::max(); //stolen from boost::simd
 
     //Define loop counter
     const auto simd_size = simd_type_T::base_length;
@@ -53,7 +53,7 @@ T max(T const* first, T const* last, Comp comp)
     //---prologue
     for (; i < size_prologue_loop; ++i)
     {
-        if (comp(*first, max_val))
+        if (comp(max_val, *first))
         {
             max_val = *first;
         }
@@ -65,17 +65,17 @@ T max(T const* first, T const* last, Comp comp)
     for (; i < size_simd_loop; i += simd_size)
     {
         const simd_type_T element = load(first);
-        const simd_mask_T mask = comp(current_max_simd, element);
+        const simd_mask_T mask = comp(element, current_max_simd);
         current_max_simd = blend(current_max_simd, element, mask);
         first += simd_size;
     }
     //extract max from simdtype
-    for_each(current_max_simd, [&](T el) {if (comp(el, max_val)) { max_val = el; }});
+    for_each(current_max_simd, [&](T el) {if (comp(max_val, el)) { max_val = el; }});
 
     //---epilogue
     for (; i < size; ++i)
     {
-        if (comp(*first, max_val))
+        if (comp(max_val, *first))
         {
             max_val = *first;
         }

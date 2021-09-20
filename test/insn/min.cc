@@ -17,16 +17,16 @@ http://www.boost.org/LICENSE_1_0.txt)
 namespace SIMDPP_ARCH_NAMESPACE {
 
 template<typename T>
-struct binary_cmp_greater
+struct binary_cmp_less
 {
 public:
-    binary_cmp_greater() = default;
+    binary_cmp_less() = default;
     using simd_mask_T = typename simdpp::simd_traits<T>::simd_mask_type;
     using simd_type_T = typename simdpp::simd_traits<T>::simd_type;
 
-    SIMDPP_INL bool operator()(T a, T b) const SIMDPP_NOEXCEPT { return a > b; }
+    SIMDPP_INL bool operator()(T a, T b) const SIMDPP_NOEXCEPT { return a < b; }
 
-    SIMDPP_INL simd_mask_T operator()(const simd_type_T& a, const simd_type_T& b) const SIMDPP_NOEXCEPT { return simdpp::cmp_gt(a, b); }
+    SIMDPP_INL simd_mask_T operator()(const simd_type_T& a, const simd_type_T& b) const SIMDPP_NOEXCEPT { return simdpp::cmp_lt(a, b); }
 };
 
 template<typename Container>
@@ -48,7 +48,7 @@ struct MinFuzzingTest
     MinFuzzingTest(std::initializer_list<std::size_t> sizes = {}) :m_sizes(sizes), m_generator() {}
     void operator()(TestReporter& tr)
     {
-        auto cmpOPGreater = binary_cmp_greater<T>();
+        auto cmpOPLess = binary_cmp_less<T>();
         for (auto size : m_sizes)
         {
             {//aligned input/ouput 
@@ -66,13 +66,13 @@ struct MinFuzzingTest
             {//aligned input/ouput + predicate 
                 auto input(DataGeneratorAligned<T, GeneratorRandom<T>>(size, m_generator));
                 std::reverse(std::begin(input), std::end(input));
-                auto res = simdpp::min(input.data(), input.data() + input.size(), cmpOPGreater);
+                auto res = simdpp::min(input.data(), input.data() + input.size(), cmpOPLess);
                 TEST_EQUAL(tr, res, ExtractMinFromContainer(input));
             }
             {//unaligned input/ouput + predicate 
                 auto input(DataGenerator<T, GeneratorRandom<T>>(size, m_generator));
                 std::reverse(std::begin(input), std::end(input));
-                auto res = simdpp::min(input.data(), input.data() + input.size(), cmpOPGreater);
+                auto res = simdpp::min(input.data(), input.data() + input.size(), cmpOPLess);
                 TEST_EQUAL(tr, res, ExtractMinFromContainer(input));
             }
         }
@@ -86,7 +86,7 @@ void test_min_type(TestResultsSet& ts, TestReporter& tr)
     using namespace simdpp;
     using vector_t = std::vector<T>;
     using vector_aligned_t = std::vector<T, aligned_allocator<T, simd_traits<T>::alignment>>;
-    auto cmpOPGreater = binary_cmp_greater<T>();
+    auto cmpOPLess = binary_cmp_less<T>();
     {//test classical min
         { //test prologue
             vector_aligned_t ivect(5);
@@ -116,23 +116,23 @@ void test_min_type(TestResultsSet& ts, TestReporter& tr)
             vector_aligned_t ivect(5);
             std::iota(begin(ivect), end(ivect), (T)1);
             ivect[0] = { (T)0 };
-            TEST_EQUAL(tr, (T)0, min(ivect.data(), ivect.data() + ivect.size(), cmpOPGreater));
+            TEST_EQUAL(tr, (T)0, min(ivect.data(), ivect.data() + ivect.size(), cmpOPLess));
         }
         { //test epilogue
             vector_aligned_t ivect(100);
             std::iota(begin(ivect), end(ivect), (T)1);
             ivect[99] = { (T)0 };
-            TEST_EQUAL(tr, (T)0, min(ivect.data(), ivect.data() + ivect.size(), cmpOPGreater));
+            TEST_EQUAL(tr, (T)0, min(ivect.data(), ivect.data() + ivect.size(), cmpOPLess));
         }
         { //test main loop and epilogue on aligned vector
             vector_aligned_t ivect(100);
             std::iota(begin(ivect), end(ivect), (T)1);
             ivect[50] = { (T)0 };
-            TEST_EQUAL(tr, (T)0, min(ivect.data(), ivect.data() + ivect.size(), cmpOPGreater));
+            TEST_EQUAL(tr, (T)0, min(ivect.data(), ivect.data() + ivect.size(), cmpOPLess));
         }
         {// test first==last
             vector_aligned_t ivect(5);
-            TEST_EQUAL(tr, std::numeric_limits<T>::max(), min(ivect.data() + ivect.size(), ivect.data() + ivect.size(), cmpOPGreater));
+            TEST_EQUAL(tr, std::numeric_limits<T>::max(), min(ivect.data() + ivect.size(), ivect.data() + ivect.size(), cmpOPLess));
         }
     }
     MinFuzzingTest<T> fuzzing({ 1,3,5,8,21,55,89,144 });//0 generate null ptr inputs/ouput

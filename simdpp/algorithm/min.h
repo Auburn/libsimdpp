@@ -25,8 +25,8 @@ namespace SIMDPP_ARCH_NAMESPACE {
 
 //Returns the value of the element with the smallest value in the range[first, last[ over comp,
 //The largest possible value for the order if the range is empty.
-template<typename T, typename Comp>
-T min(T const* first, T const* last, Comp comp)
+template<typename T, typename CompLess>
+T min(T const* first, T const* last, CompLess comp)
 {
 #ifndef SIMDPP_DEBUG  //precondition debug mode           
     if (!first)
@@ -37,7 +37,7 @@ T min(T const* first, T const* last, Comp comp)
     using simd_type_T = typename simd_traits<T>::simd_type;
     using simd_mask_T = typename simd_traits<T>::simd_mask_type;
 
-    if (first == last) return comp(T(0), T(1)) ? std::numeric_limits<T>::lowest() : std::numeric_limits<T>::max(); //stolen from boost::simd
+    if (first == last) return comp(T(0), T(1)) ? std::numeric_limits<T>::max() : std::numeric_limits<T>::lowest(); //stolen from boost::simd
 
     //Define loop counter
     const auto simd_size = simd_type_T::base_length;
@@ -53,7 +53,7 @@ T min(T const* first, T const* last, Comp comp)
     //---prologue
     for (; i < size_prologue_loop; ++i)
     {
-        if (comp(min_val, *first))
+        if (comp(*first, min_val))
         {
             min_val = *first;
         }
@@ -65,17 +65,17 @@ T min(T const* first, T const* last, Comp comp)
     for (; i < size_simd_loop; i += simd_size)
     {
         const simd_type_T element = load(first);
-        const simd_mask_T mask = comp(element, current_min_simd);
+        const simd_mask_T mask = comp(current_min_simd, element);
         current_min_simd = blend(current_min_simd, element, mask);
         first += simd_size;
     }
     //extract min from simdtype
-    for_each(current_min_simd, [&](T el) {if (comp(min_val, el)) { min_val = el; }});
+    for_each(current_min_simd, [&](T el) {if (comp(el, min_val)) { min_val = el; }});
 
     //---epilogue
     for (; i < size; ++i)
     {
-        if (comp(min_val, *first))
+        if (comp(*first, min_val))
         {
             min_val = *first;
         }
