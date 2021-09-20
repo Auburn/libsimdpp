@@ -79,8 +79,10 @@ void test_find(TestResults& res, TestReporter& tr)
     TestResultsSet& ts = res.new_results_set("find");
     test_find_type<double>(ts, tr);
     test_find_type<float>(ts, tr);
-    // test_find_type<uint64_t>(ts, tr); //FIXME
-    // test_find_type<int64_t>(ts, tr); //FIXME
+#if SIMDPP_USE_NULL || SIMDPP_USE_AVX2 || SIMDPP_USE_NEON64
+    test_find_type<uint64_t>(ts, tr);
+    test_find_type<int64_t>(ts, tr);
+#endif
     test_find_type<uint32_t>(ts, tr);
     test_find_type<int32_t>(ts, tr);
     test_find_type<uint16_t>(ts, tr);

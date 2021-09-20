@@ -145,8 +145,10 @@ void test_min(TestResults& res, TestReporter& tr)
     TestResultsSet& ts = res.new_results_set("min");
     test_min_type<double>(ts, tr);
     test_min_type<float>(ts, tr);
-    //test_min_type<uint64_t>(ts, tr); //FIXME
-    //test_min_type<int64_t>(ts, tr); //FIXME
+#if SIMDPP_USE_NULL || SIMDPP_USE_AVX2 || SIMDPP_USE_NEON64
+    test_min_type<uint64_t>(ts, tr);
+    test_min_type<int64_t>(ts, tr);
+#endif
     test_min_type<uint32_t>(ts, tr);
     test_min_type<int32_t>(ts, tr);
     test_min_type<uint16_t>(ts, tr);

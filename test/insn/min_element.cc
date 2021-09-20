@@ -24,9 +24,9 @@ public:
     using simd_mask_T = typename simdpp::simd_traits<T>::simd_mask_type;
     using simd_type_T = typename simdpp::simd_traits<T>::simd_type;
 
-    SIMDPP_INL bool operator()(T a, T b) const SIMDPP_NOEXCEPT { return a < b; }
+    SIMDPP_INL bool operator()(T a, T b) const SIMDPP_NOEXCEPT { return a > b; }
 
-    SIMDPP_INL simd_mask_T operator()(const simd_type_T& a, const simd_type_T& b) const SIMDPP_NOEXCEPT { return simdpp::cmp_lt(a, b); }
+    SIMDPP_INL simd_mask_T operator()(const simd_type_T& a, const simd_type_T& b) const SIMDPP_NOEXCEPT { return simdpp::cmp_gt(a, b); }
 };
 
 template<typename T>
@@ -56,7 +56,7 @@ struct MinElementFuzzingTest
             {//aligned input/ouput + predicate 
                 auto input(DataGeneratorAligned<T, GeneratorRandom<T>>(size, m_generator));
                 std::reverse(std::begin(input), std::end(input));
-                auto res_std = std::min_element(input.cbegin(), input.cend(), cmpOPGreater);
+                auto res_std = std::min_element(input.cbegin(), input.cend());
                 auto res_simd = simdpp::min_element(input.data(), input.data() + input.size(), cmpOPGreater);
                 TEST_EQUAL(tr, *res_std, *res_simd);
 
@@ -64,7 +64,7 @@ struct MinElementFuzzingTest
             {//unaligned input/ouput + predicate 
                 auto input(DataGenerator<T, GeneratorRandom<T>>(size, m_generator));
                 std::reverse(std::begin(input), std::end(input));
-                auto res_std = std::min_element(input.cbegin(), input.cend(), cmpOPGreater);
+                auto res_std = std::min_element(input.cbegin(), input.cend());
                 auto res_simd = simdpp::min_element(input.data(), input.data() + input.size(), cmpOPGreater);
                 TEST_EQUAL(tr, *res_std, *res_simd);
             }
@@ -131,8 +131,10 @@ void test_min_element(TestResults& res, TestReporter& tr)
     TestResultsSet& ts = res.new_results_set("min_element");
     test_min_element_type<double>(ts, tr);
     test_min_element_type<float>(ts, tr);
-    //test_max_type<uint64_t>(ts, tr); //FIXME
-    //test_max_type<int64_t>(ts, tr); //FIXME
+#if SIMDPP_USE_NULL || SIMDPP_USE_AVX2 || SIMDPP_USE_NEON64
+    test_min_element_type<uint64_t>(ts, tr);
+    test_min_element_type<int64_t>(ts, tr); 
+#endif
     test_min_element_type<uint32_t>(ts, tr);
     test_min_element_type<int32_t>(ts, tr);
     test_min_element_type<uint16_t>(ts, tr);

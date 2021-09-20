@@ -84,8 +84,10 @@ void test_lexicographical_compare(TestResults& res, TestReporter& tr)
     TestResultsSet& ts = res.new_results_set("lexicographical_compare");
     //test_lexicograpical_compare_type<double>(ts, tr); //FIXME
     //test_lexicograpical_compare_type<float>(ts, tr);  //FIXME
-    //test_lexicograpical_compare_type<uint64_t>(ts, tr); //FIXME
-    //test_lexicograpical_compare_type<int64_t>(ts, tr); //FIXME
+#if SIMDPP_USE_NULL || SIMDPP_USE_AVX2 || SIMDPP_USE_NEON64
+    test_lexicograpical_compare_type<uint64_t>(ts, tr);
+    test_lexicograpical_compare_type<int64_t>(ts, tr);
+#endif
     test_lexicograpical_compare_type<uint32_t>(ts, tr);
     test_lexicograpical_compare_type<int32_t>(ts, tr);
     test_lexicograpical_compare_type<uint16_t>(ts, tr);

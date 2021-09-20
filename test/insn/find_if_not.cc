@@ -98,8 +98,10 @@ void test_find_if_not(TestResults& res, TestReporter& tr)
     TestResultsSet& ts = res.new_results_set("find_if_not");
     //test_find_if_not_type<double>(ts, tr); //FIXME missing reduce and
     //test_find_if_not_type<float>(ts, tr); //FIXME missing reduce and
-    //test_find_if_not_type<uint64_t>(ts, tr); //FIXME
-    //test_find_if_not_type<int64_t>(ts, tr); //FIXME
+#if SIMDPP_USE_NULL || SIMDPP_USE_AVX2 || SIMDPP_USE_NEON64
+    test_find_if_not_type<uint64_t>(ts, tr);
+    test_find_if_not_type<int64_t>(ts, tr); 
+#endif
     test_find_if_not_type<uint32_t>(ts, tr);
     test_find_if_not_type<int32_t>(ts, tr);
     test_find_if_not_type<uint16_t>(ts, tr);

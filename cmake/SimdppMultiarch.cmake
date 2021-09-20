@@ -321,7 +321,7 @@ if(SIMDPP_CLANG OR SIMDPP_GCC)
 elseif(SIMDPP_INTEL)
     set(SIMDPP_X86_AVX2_CXX_FLAGS "-xCORE-AVX2")
 elseif(SIMDPP_MSVC)
-    set(SIMDPP_X86_AVX2_CXX_FLAGS "/arch:AVX")
+    set(SIMDPP_X86_AVX2_CXX_FLAGS "/arch:AVX2")
 elseif(SIMDPP_MSVC_INTEL)
     set(SIMDPP_X86_AVX2_CXX_FLAGS "/arch:CORE-AVX2")
 endif()
@@ -370,7 +370,7 @@ if(SIMDPP_CLANG OR SIMDPP_GCC)
 elseif(SIMDPP_INTEL)
     set(SIMDPP_X86_FMA3_CXX_FLAGS "-xCORE-AVX2")
 elseif(SIMDPP_MSVC)
-    set(SIMDPP_X86_FMA3_CXX_FLAGS "/arch:AVX")
+    set(SIMDPP_X86_FMA3_CXX_FLAGS "/arch:AVX2")
 elseif(SIMDPP_MSVC_INTEL)
     set(SIMDPP_X86_FMA3_CXX_FLAGS "/arch:CORE-AVX2")
 endif()
@@ -496,6 +496,8 @@ if(SIMDPP_CLANG OR SIMDPP_GCC)
     set(SIMDPP_X86_AVX512F_CXX_FLAGS "-mavx512f -O1")
 elseif(SIMDPP_INTEL)
     set(SIMDPP_X86_AVX512F_CXX_FLAGS "-xCOMMON-AVX512")
+elseif(SIMDPP_MSVC)
+    set(SIMDPP_X86_AVX512F_CXX_FLAGS "/arch:AVX512")
 elseif(SIMDPP_MSVC_INTEL)
     set(SIMDPP_X86_AVX512F_CXX_FLAGS "/arch:COMMON-AVX512")
 else()
@@ -561,6 +563,8 @@ if(SIMDPP_CLANG OR SIMDPP_GCC)
     #unsupported on MSVC
 elseif(SIMDPP_INTEL)
     set(SIMDPP_X86_AVX512BW_CXX_FLAGS "-xCORE-AVX512")
+elseif(SIMDPP_MSVC)
+    set(SIMDPP_X86_AVX512BW_CXX_FLAGS "/arch:AVX512")
 elseif(SIMDPP_MSVC_INTEL)
     set(SIMDPP_X86_AVX512BW_CXX_FLAGS "/arch:CORE-AVX512")
 endif()
@@ -602,7 +606,8 @@ set(SIMDPP_X86_AVX512BW_TEST_CODE
 list(APPEND SIMDPP_ARCHS_PRI "X86_AVX512DQ")
 if(SIMDPP_CLANG OR SIMDPP_GCC OR SIMDPP_INTEL)
     set(SIMDPP_X86_AVX512DQ_CXX_FLAGS "-mavx512dq")
-    #unsupported on MSVC
+elseif(SIMDPP_MSVC)
+    set(SIMDPP_X86_AVX512DQ_CXX_FLAGS "/arch:AVX512")
 endif()
 set(SIMDPP_X86_AVX512DQ_DEFINE "SIMDPP_ARCH_X86_AVX512DQ")
 set(SIMDPP_X86_AVX512DQ_SUFFIX "-x86_avx512dq")
@@ -642,7 +647,8 @@ set(SIMDPP_X86_AVX512DQ_TEST_CODE
 list(APPEND SIMDPP_ARCHS_PRI "X86_AVX512VL")
 if(SIMDPP_CLANG OR SIMDPP_GCC OR SIMDPP_INTEL)
     set(SIMDPP_X86_AVX512VL_CXX_FLAGS "-mavx512vl")
-    #unsupported on MSVC
+elseif(SIMDPP_MSVC)
+    set(SIMDPP_X86_AVX512VL_CXX_FLAGS "/arch:AVX512")
 endif()
 set(SIMDPP_X86_AVX512VL_DEFINE "SIMDPP_ARCH_X86_AVX512VL")
 set(SIMDPP_X86_AVX512VL_SUFFIX "-x86_avx512vl")
@@ -1055,8 +1061,7 @@ function(simdpp_multiarch FILE_LIST_VAR SRC_FILE)
     list(REMOVE_AT ARCHS 0 1) # strip FILE_LIST_VAR and SRC_FILE args
     foreach(ARCH ${ARCHS})
         simdpp_get_arch_info(CXX_FLAGS DEFINES_LIST SUFFIX ${ARCH})
-
-        set(CXX_FLAGS "-I\"${CMAKE_CURRENT_SOURCE_DIR}/${SRC_PATH}\" ${CXX_FLAGS}")
+        
         if(NOT "${SUFFIX}" STREQUAL "")
             # Copy the source file and add the required flags
             set(DST_ABS_FILE "${CMAKE_CURRENT_BINARY_DIR}/${SRC_PATH}/${SRC_NAME}_simdpp_${SUFFIX}${SRC_EXT}")
@@ -1073,8 +1078,10 @@ function(simdpp_multiarch FILE_LIST_VAR SRC_FILE)
                                IMPLICIT_DEPENDS CXX "${SRC_ABS_FILE}")
 
             list(APPEND FILE_LIST "${DST_ABS_FILE}")
-            set_source_files_properties("${DST_ABS_FILE}" PROPERTIES COMPILE_FLAGS ${CXX_FLAGS}
-                                                                     GENERATED TRUE)
+            set_source_files_properties("${DST_ABS_FILE}" PROPERTIES
+                COMPILE_FLAGS "${CXX_FLAGS}"
+                INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/${SRC_PATH}"
+                GENERATED TRUE)
 
             # For the first file that is being processed, set it to emit
             # dispatcher code. The required flags will be added later

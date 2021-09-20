@@ -48,7 +48,7 @@ T max(T const* first, T const* last, Comp comp)
     const auto size_simd_loop = range.second;
 
     auto i = 0u;
-    auto max_val = *first; //initialize with thirst element
+    auto max_val = *first; //initialize with first element
 
     //---prologue
     for (; i < size_prologue_loop; ++i)
@@ -108,7 +108,7 @@ T max(T const* first, T const* last)
     const auto size_simd_loop = range.second;
 
     auto i = 0u;
-    auto max_val = *first; //initialize with thirst element
+    auto max_val = *first; //initialize with first element
 
     //---prologue
     for (; i < size_prologue_loop; ++i)

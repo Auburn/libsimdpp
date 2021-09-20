@@ -43,7 +43,7 @@ const std::pair<ptrdiff_t, ptrdiff_t> SIMDPP_INL helper_input_range(const T* fir
 
     const auto size = last - first;
     //get first aligned adress from first
-    const T* ptr_aligned_first =detail::reach_next_aligned(first, alignment);
+    const T* ptr_aligned_first = detail::reach_next_aligned(first, alignment);
     // Next aligned address may be out of range, so make sure size_prologue_loop is not bigger than size
     const auto size_prologue_loop = std::min(size,std::distance(first, ptr_aligned_first));
     const auto size_simd_loop = (size >= size_prologue_loop) ? (simd_size * ((size- size_prologue_loop) / simd_size)) : (0u);
