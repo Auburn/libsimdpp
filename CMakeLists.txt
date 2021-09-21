@@ -57,10 +57,14 @@ install(FILES
 
 enable_testing()
 
-option(ENABLE_BENCH "Set to on in order to compile bench suite, work only in release mode" OFF)
+option(LIBSIMDPP_TEST "Set to on in order to compile test suite" OFF)
+option(LIBSIMDPP_BENCH "Set to on in order to compile bench suite, work only in release mode" OFF)
 
 add_subdirectory(simdpp)
-add_subdirectory(test)
-if(ENABLE_BENCH)
-  add_subdirectory(bench)
+
+if(LIBSIMDPP_TEST)
+    add_subdirectory(test)
+endif()  
+if(LIBSIMDPP_BENCH)
+    add_subdirectory(bench)
 endif()  
