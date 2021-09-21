@@ -12,3 +12,4 @@ libsimdpp.files
 build*
 venv
 pywiki
+/.vs
