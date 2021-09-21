@@ -78,7 +78,6 @@ template<typename T>
 void test_min_element_type(TestResultsSet& ts, TestReporter& tr)
 {
     using namespace simdpp;
-    using vector_t = std::vector<T>;
     using vector_aligned_t = std::vector<T, aligned_allocator<T, simd_traits<T>::alignment>>;
     auto cmpOPLess = binary_cmp_less<T>();
     {//test classical max

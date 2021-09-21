@@ -135,7 +135,6 @@ void test_reducebinop_type(TestResultsSet& ts, TestReporter& tr)
 {
     using namespace simdpp;
     using vector_t = std::vector<T>;
-    using vector_aligned_t = std::vector<T, aligned_allocator<T, simd_traits<T>::alignment>>;
     auto opPlus = BinaryOpPlus<T>();
 
     { //test prologue

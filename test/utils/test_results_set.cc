@@ -376,14 +376,14 @@ bool skip_results_until_same_test(std::size_t& ia, std::size_t& ib,
 {
     if (is_test_seq_from_same_test(a[ia], b[ib]))
         return false;
-    auto max_skipped = a.size() - ia + b.size() - ib;
+    size_t max_skipped = a.size() - ia + b.size() - ib;
 
     // This problem is solved by brute force as the number of skipped sequences
     // is very likely small. We evaluate all possible ways to skip sequences
     // starting with the smallest total number of skipped sequences.
-    for (auto num_skipped = 1; num_skipped < max_skipped; ++num_skipped) {
+    for (size_t num_skipped = 1; num_skipped < max_skipped; ++num_skipped) {
 
-        for (auto i = 0; i <= num_skipped; ++i) {
+        for (size_t i = 0; i <= num_skipped; ++i) {
             auto skip_from_a = i;
             auto skip_from_b = num_skipped - i;
 
@@ -522,7 +522,7 @@ void report_test_comparison(const TestResultsSet& a, const char* a_arch,
             return;
         }
 
-        for (auto i = 0; i < a_seq_size; ++i) {
+        for (size_t i = 0; i < a_seq_size; ++i) {
             auto ia = a_seq.begin_index + i;
             auto ib = b_seq.begin_index + i;
 

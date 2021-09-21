@@ -72,16 +72,16 @@ void test_copy_type(TestResultsSet& ts, TestReporter& tr)
         vector_aligned_t ivect(150, (T)42);
         vector_t ovect(150, (T)0);
 
-        copy(ivect.data() + 10u, ivect.data() + ivect.size() - 10u, ovect.data()+10u);
-        for (auto i = 0u; i < 10u; ++i) 
+        copy(ivect.data() + 10, ivect.data() + ivect.size() - 10, ovect.data() + 10);
+        for (size_t i = 0; i < 10; ++i) 
         {
             TEST_EQUAL(tr, ovect[i], (T)0);
         }
-        for (auto i = 10; i < ovect.size() - 10u; ++i) 
+        for (size_t i = 10; i < ovect.size() - 10; ++i) 
         {
             TEST_EQUAL(tr, ovect[i], ivect[i]);
         }
-        for (auto i = ovect.size() - 10u; i < ovect.size(); ++i)
+        for (size_t i = ovect.size() - 10; i < ovect.size(); ++i)
         {
             TEST_EQUAL(tr, ovect[i], (T)0);
         }

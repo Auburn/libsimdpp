@@ -722,6 +722,8 @@ void test_cmp_memory(TestReporter& tr, const E* e1, const E* e2, unsigned count,
         tr.out() << (expected_equal ? "Memory not equal:\n"
                                     : "Memory equal:\n");
         print_data_diff(tr.out(), GetElementType<E>::value, count, e1, e2);
+
+        //__debugbreak();
     }
 }
 
@@ -743,6 +745,8 @@ void test_cmp_equal_impl(std::true_type /*is_V1_vector*/, TestReporter& tr,
         print_file_info(tr.out(), file, line);
         tr.out() << (expected_equal ? "Vectors not equal:\n" : "Vectors equal:\n");
         print_data_diff(tr.out(), GetElementType<V>::value, V::length, &v1, &v2);
+
+        //__debugbreak();
     }
 }
 
@@ -761,6 +765,8 @@ void test_cmp_equal_impl(std::false_type /*is_T1_vector*/, TestReporter& tr,
         print_file_info(tr.out(), file, line);
         tr.out() << (expected_equal ? "Data not equal:\n" : "Data equal:\n");
         print_data_diff(tr.out(), GetElementType<T1>::value, 1, &a1, &a2);
+
+        //__debugbreak();
     }
 }
 
@@ -787,6 +793,8 @@ void test_cmp_equal_collections_impl(TestReporter& tr,
         print_file_info(tr.out(), file, line);
         tr.out() << " Container Size not equal:\n";
         tr.out() << " Container1 Size is:"<<a1.size()<<", Container2 Size is:" << a2.size()<<"\n";
+        
+        //__debugbreak();
         return; //NO NEED TO GO FURTHER
     }
     auto it1beg = a1.cbegin(), it1end = a1.cend();

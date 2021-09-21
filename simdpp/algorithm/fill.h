@@ -35,7 +35,6 @@ void fill(T* first, T* last, U value)
         throw std::runtime_error("fill - null ptr last.");
 #endif
     using simd_type_T = typename simd_traits<T>::simd_type;
-    const auto alignment = simd_traits<T>::alignment;
 
     simd_type_T valsimd = splat((T)value);
 

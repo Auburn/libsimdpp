@@ -131,7 +131,6 @@ template<typename T, typename U>
     void test_transform_reduce_type_binary(TestResultsSet& ts, TestReporter& tr)
 {
     using namespace simdpp;
-    using vector_t = std::vector<T>;
     using vector_aligned_t = std::vector<T, aligned_allocator<T, simd_traits<T>::alignment>>;
     using vector_aligned_u = std::vector<U, aligned_allocator<U, simd_traits<U>::alignment>>;
     {

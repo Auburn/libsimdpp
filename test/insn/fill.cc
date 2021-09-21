@@ -68,7 +68,7 @@ void test_fill_type(TestResultsSet& ts, TestReporter& tr)
         vector_t expected(150, (T)42);
 
         fill(ivect.data() + 10u, ivect.data() + ivect.size() - 10u, (T)42);
-        for (auto i = 10; i < expected.size() - 10u; ++i) 
+        for (size_t i = 10; i < expected.size() - 10u; ++i) 
         {
             TEST_EQUAL(tr, expected[i], ivect[i]);
         }

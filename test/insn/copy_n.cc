@@ -44,11 +44,11 @@ void test_copy_n_type(TestResultsSet& ts, TestReporter& tr)
         vector_t ovect(150, (T)0);
 
         copy_n(ivect.data(),100, ovect.data());
-        for (auto i = 0; i < 100; ++i)
+        for (size_t i = 0; i < 100; ++i)
         {
             TEST_EQUAL(tr, ovect[i], ivect[i]);
         }
-        for (auto i = 100; i <ovect.size(); ++i)
+        for (size_t i = 100; i <ovect.size(); ++i)
         {
             TEST_EQUAL(tr, ovect[i], (T)0);
         }

@@ -37,7 +37,6 @@ T const* find_if_not(T const* first, T const* last, UnaryPredicate pred)
 
     //define loopcounter
     const auto simd_size = simd_type_T::base_length;
-    const auto size = std::distance(first, last);
     //note enforce that input is aligned when we start the main simd loop
     const auto range = helper_input_range(first, last);
     const auto size_prologue_loop = range.first;

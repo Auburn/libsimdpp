@@ -82,7 +82,6 @@ T reduce(T const* first, T const* last, T init, T neutral, BinOp f) //need neutr
         throw std::runtime_error("reduce - null ptr last.");
 #endif
     using simd_type_T = typename simd_traits<T>::simd_type;
-    const auto alignment = simd_traits<T>::alignment;
 
     //Define loop counter
     const auto size = std::distance(first, last);
