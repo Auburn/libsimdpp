@@ -46,17 +46,6 @@ set(TEST_INSN_SOURCES
     utils/test_results_set.cc
     main_insn.cc
 )
-
-set(TEST_INSN_HEADERS
-    utils/test_helpers.h
-    utils/test_results.h
-    utils/test_results_set.h
-    insn/tests.h
-    common/masks.h
-    common/vectors.h
-    common/aligned_allocator.h
-)
-
 set(TEST_INSN_ARCH_SOURCES
     insn/all_of.cc
     insn/any_of.cc
@@ -127,7 +116,7 @@ if(HAS_SSE2)
         set(DEFAULT_FLAGS " -mfpmath=sse -msse2")
     elseif(SIMDPP_INTEL)
         set(DEFAULT_FLAGS " -msse2")
-    elseif(SIMDPP_MSVC OR SIMDPP_MSVC_INTEL)
+    elseif((SIMDPP_MSVC OR SIMDPP_MSVC_INTEL) AND NOT SIMDPP_64BIT)
         set(DEFAULT_FLAGS " /arch:SSE2")
     endif()
 
@@ -150,11 +139,10 @@ if(SIMDPP_MSVC)
         set_target_properties(test_insn PROPERTIES COMPILE_FLAGS "/Gv")
     endif()
 elseif(SIMDPP_MSVC_INTEL)
-    set_target_properties(test_insn PROPERTIES COMPILE_FLAGS "/Qstd=c++11")
 else()
     # Xcode clang linker spends very long time in deduplication pass when
     # linking the test executable unless -fvisibility-inlines-hidden is passed.
-    set_target_properties(test_insn PROPERTIES COMPILE_FLAGS "-std=c++11 -O2 -Wall -Wextra -fvisibility-inlines-hidden")
+    set_target_properties(test_insn PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-deprecated-declarations -fvisibility-inlines-hidden")
 endif()
 
 if("${CMAKE_VERSION}" VERSION_GREATER 2.8.12)
@@ -191,9 +179,8 @@ add_executable(test_dispatcher EXCLUDE_FROM_ALL
 
 if(SIMDPP_MSVC)
 elseif(SIMDPP_MSVC_INTEL)
-    set_target_properties(test_dispatcher PROPERTIES COMPILE_FLAGS "/Qstd=c++11")
 else()
-    set_target_properties(test_dispatcher PROPERTIES COMPILE_FLAGS "-std=c++11 -Wall -fvisibility-inlines-hidden")
+    set_target_properties(test_dispatcher PROPERTIES COMPILE_FLAGS "-Wall -fvisibility-inlines-hidden")
 endif()
 if("${CMAKE_VERSION}" VERSION_GREATER 2.8.12)
     target_compile_definitions(test_dispatcher PUBLIC "-DSIMDPP_DISABLE_DEPRECATED_IN_2_1_AND_OLDER=1")
@@ -256,9 +243,8 @@ add_executable(test_expr EXCLUDE_FROM_ALL
 
 if(SIMDPP_MSVC)
 elseif(SIMDPP_MSVC_INTEL)
-    set_target_properties(test_expr PROPERTIES COMPILE_FLAGS "/Qstd=c++11")
 else()
-    set_target_properties(test_expr PROPERTIES COMPILE_FLAGS "-std=c++11 -O2 -Wall -fvisibility-inlines-hidden")
+    set_target_properties(test_expr PROPERTIES COMPILE_FLAGS "-Wall -fvisibility-inlines-hidden")
 endif()
 if("${CMAKE_VERSION}" VERSION_GREATER 2.8.12)
     target_compile_definitions(test_expr PUBLIC "-DSIMDPP_DISABLE_DEPRECATED_IN_2_1_AND_OLDER=1")
