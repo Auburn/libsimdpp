@@ -176,8 +176,9 @@ template<> struct shuffle_impl<6> {
     {
         // note that _mm512_alignr_epi32 operates on entire vector
         __m512i ap = _mm512_alignr_epi32(a.native(), a.native(), s0);
+        __m512 bv =  _mm512_castsi512_ps( b.native() );
         const int mask = SIMDPP_SHUFFLE_MASK_4x2_4(s0>3, s0>2, s0>1, s0>0);
-        return _mm512_mask_alignr_epi32(ap, mask, b.native(), b.native(), (s0+12)%16);
+        return _mm512_mask_alignr_epi32(ap, (__mmask16)mask, _mm512_castps_si512(bv), _mm512_castps_si512(bv), (s0 + 12) % 16);
     }
 #endif
 };
